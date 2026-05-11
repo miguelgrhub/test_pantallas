@@ -3,59 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream en Vivo</title>
+    <title>Menú Principal</title>
     <style>
-        /* Limpiamos la pantalla */
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background-color: #000; 
+        /* Fondo oscuro para que no lastime los ojos y parezca Smart TV */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0f171e; /* El color de fondo oficial de Prime Video */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* El video a pantalla completa */
-        iframe { 
-            width: 100vw; 
-            height: 100vh; 
-            border: none; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            z-index: 1; 
+        .contenedor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Este es el escudo que bloqueará la pantalla después */
-        #escudo-invisible { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            z-index: 2; /* Se pone por encima del video */
-            background: transparent; 
-            display: none; /* Oculto al principio para dejarte darle Play */
+        /* Estilo del botón gigante */
+        .boton-prime {
+            background-color: #00a8e1; /* Azul brillante de Prime */
+            color: white;
+            text-decoration: none;
+            font-size: 2.5rem;
+            padding: 30px 60px;
+            border-radius: 15px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0, 168, 225, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s; /* Pequeño efecto al tocar */
+        }
+
+        /* Efecto de hundimiento cuando tocas la pantalla */
+        .boton-prime:active {
+            transform: scale(0.95);
+        }
+
+        .subtitulo {
+            color: #8197a4;
+            margin-top: 20px;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
 
-    <iframe 
-        src="https://www.youtube.com/embed/NWH-ufhDdh0?autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3" 
-        allow="autoplay; encrypted-media" 
-        allowfullscreen>
-    </iframe>
-
-    <div id="escudo-invisible"></div>
+    <div class="contenedor">
+        <a href="https://www.primevideo.com" target="_blank" class="boton-prime" onclick="forzarSalida(event)">
+            📺 Abrir Prime Video
+        </a>
+        <div class="subtitulo">Toca para salir al navegador libre</div>
+    </div>
 
     <script>
-        // Un temporizador que cuenta 10 segundos (10000 milisegundos)
-        // Te da 10 segundos para tocar la pantalla y darle Play al video.
-        // Después de eso, activa el escudo invisible para que ya no se pueda tocar.
-        setTimeout(function() {
-            document.getElementById('escudo-invisible').style.display = 'block';
-        }, 10000); 
+        // La "magia negra" para burlar el software
+        function forzarSalida(event) {
+            // 1. Detenemos el clic normal para que nuestras reglas dominen
+            event.preventDefault();
+            
+            // 2. Ataque #1: Le decimos a Windows que abra una pestaña/ventana totalmente nueva
+            window.open("https://www.primevideo.com", "_blank", "noopener,noreferrer");
+            
+            // 3. Ataque #2: Si el software tiene la página atrapada en un "marco" interno (iframe), 
+            // esto rompe el marco y fuerza a toda la pantalla a irse a Amazon.
+            window.top.location.href = "https://www.primevideo.com";
+        }
     </script>
 
 </body>
