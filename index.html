@@ -6,9 +6,7 @@
   <title>Entretenimiento</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap');
-
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Inter', sans-serif;
       background: #07070d;
@@ -20,8 +18,6 @@
       padding: 2rem;
       overflow: hidden;
     }
-
-    /* Fondo animado sutil */
     body::before {
       content: '';
       position: fixed;
@@ -31,13 +27,7 @@
         radial-gradient(ellipse 50% 50% at 80% 50%, rgba(0,120,200,0.10) 0%, transparent 70%);
       pointer-events: none;
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 3rem;
-      position: relative;
-    }
-
+    header { text-align: center; margin-bottom: 3rem; }
     header h1 {
       font-size: clamp(1.4rem, 3vw, 2.2rem);
       font-weight: 300;
@@ -45,7 +35,6 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.5);
     }
-
     header p {
       margin-top: 0.4rem;
       font-size: 0.8rem;
@@ -53,18 +42,14 @@
       color: rgba(255,255,255,0.2);
       text-transform: uppercase;
     }
-
     .grid {
       display: grid;
-      /* Se adapta solo: 2 cols en pantallas chicas, 3 en medianas, 4+ en grandes */
       grid-template-columns: repeat(auto-fit, minmax(160px, 200px));
       gap: 20px;
       justify-content: center;
       max-width: 900px;
       width: 100%;
-      position: relative;
     }
-
     .card {
       aspect-ratio: 1;
       background: rgba(255,255,255,0.04);
@@ -82,7 +67,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .card::after {
       content: '';
       position: absolute;
@@ -92,21 +76,13 @@
       transition: opacity 0.2s;
       border-radius: inherit;
     }
-
     .card:hover, .card:focus-visible {
       background: rgba(255,255,255,0.08);
       border-color: rgba(255,255,255,0.18);
       transform: translateY(-3px);
     }
-
-    .card:active {
-      transform: scale(0.94);
-    }
-
-    .card:active::after {
-      opacity: 0.06;
-    }
-
+    .card:active { transform: scale(0.94); }
+    .card:active::after { opacity: 0.06; }
     .card img {
       width: 70px;
       height: 70px;
@@ -115,7 +91,6 @@
       z-index: 1;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
     }
-
     .card span {
       font-size: 0.78rem;
       font-weight: 500;
@@ -125,7 +100,6 @@
       position: relative;
       z-index: 1;
     }
-
     footer {
       margin-top: 3rem;
       font-size: 0.7rem;
@@ -133,6 +107,29 @@
       letter-spacing: 0.1em;
       text-align: center;
     }
+    #btn-back {
+      display: none;
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      color: rgba(255,255,255,0.65);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 1rem 2.8rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    #btn-back:hover  { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.35); }
+    #btn-back:active { transform: translateX(-50%) scale(0.96); }
   </style>
 </head>
 <body>
@@ -146,8 +143,10 @@
 
   <footer>Tótem · Lobby</footer>
 
+  <button id="btn-back" onclick="volverAlLauncher()">← Regresar</button>
+
   <script>
-    // ── AGREGA O QUITA PLATAFORMAS AQUÍ ──────────────────────────────────────
+    // ── PLATAFORMAS SIEMPRE VISIBLES ──────────────────────────────────────────
     const plataformas = [
       {
         nombre: "Netflix",
@@ -192,26 +191,58 @@
         acento: "#002be7"
       },
     ];
+
+    // ── SOLO VISIBLE EN CANADÁ ────────────────────────────────────────────────
+    const soloCanada = [
+      {
+        nombre: "FuboTV",
+        url:    "https://www.fubo.tv",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/FuboTV_logo.svg/1200px-FuboTV_logo.svg.png",
+        acento: "#e8001c"
+      },
+    ];
     // ─────────────────────────────────────────────────────────────────────────
 
     const grid = document.getElementById('grid');
 
-    plataformas.forEach(p => {
+    function crearCard(p) {
       const a = document.createElement('a');
       a.className = 'card';
       a.href = p.url;
-
-      // En Android WebView muchos sistemas bloquean _blank,
-      // así que usamos _self como fallback seguro.
-      // En Windows / Chrome normal se abrirá en la misma pestaña
-      // (lo cual en un kiosk es lo correcto).
       a.target = '_self';
-
       a.style.setProperty('--accent', p.acento);
-      a.innerHTML = `<img src="${p.icono}" alt="${p.nombre}" /><span>${p.nombre}</span>`;
-
+      a.innerHTML = '<img src="' + p.icono + '" alt="' + p.nombre + '" /><span>' + p.nombre + '</span>';
+      a.addEventListener('click', () => {
+        sessionStorage.setItem('fue_a_plataforma', '1');
+      });
       grid.appendChild(a);
-    });
+    }
+
+    plataformas.forEach(crearCard);
+
+    // Detecta país y agrega fubo solo si es Canadá
+    fetch('https://ipapi.co/json/')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.country_code === 'CA') {
+          soloCanada.forEach(crearCard);
+        }
+      })
+      .catch(function(){
+        // Si falla la detección, no mostramos fubo
+      });
+
+    // Muestra botón de regreso si el usuario llegó desde una plataforma
+    if (sessionStorage.getItem('fue_a_plataforma')) {
+      document.getElementById('btn-back').style.display = 'block';
+    }
+
+    function volverAlLauncher() {
+      sessionStorage.removeItem('fue_a_plataforma');
+      history.go(-(history.length - 1));
+      // Fallback: si history no funciona en el webview, recarga
+      setTimeout(function(){ location.reload(); }, 300);
+    }
   </script>
 
 </body>
