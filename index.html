@@ -1,44 +1,212 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0f171e; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entretenimiento</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap');
 
-        .boton-prime {
-            background-color: #00a8e1;
-            color: white;
-            text-decoration: none;
-            font-size: 2.5rem;
-            padding: 30px 60px;
-            border-radius: 15px;
-            font-weight: bold;
-            box-shadow: 0 8px 25px rgba(0, 168, 225, 0.4);
-            transition: transform 0.1s;
-        }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .boton-prime:active {
-            transform: scale(0.95);
-        }
-    </style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #07070d;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* Fondo animado sutil */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 50%, rgba(80,40,180,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 50%, rgba(0,120,200,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    header p {
+      margin-top: 0.4rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      /* Se adapta solo: 2 cols en pantallas chicas, 3 en medianas, 4+ en grandes */
+      grid-template-columns: repeat(auto-fit, minmax(160px, 200px));
+      gap: 20px;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+    }
+
+    .card {
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent, #fff);
+      opacity: 0;
+      transition: opacity 0.2s;
+      border-radius: inherit;
+    }
+
+    .card:hover, .card:focus-visible {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-3px);
+    }
+
+    .card:active {
+      transform: scale(0.94);
+    }
+
+    .card:active::after {
+      opacity: 0.06;
+    }
+
+    .card img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .card span {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      position: relative;
+      z-index: 1;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.12);
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-    <a href="https://www.primevideo.com" class="boton-prime">
-        📺 Abrir Prime Video
-    </a>
+  <header>
+    <h1>Entretenimiento</h1>
+    <p>Toca para abrir</p>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>Tótem · Lobby</footer>
+
+  <script>
+    // ── AGREGA O QUITA PLATAFORMAS AQUÍ ──────────────────────────────────────
+    const plataformas = [
+      {
+        nombre: "Netflix",
+        url:    "https://www.netflix.com",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1200px-Netflix_2015_logo.svg.png",
+        acento: "#e50914"
+      },
+      {
+        nombre: "Prime Video",
+        url:    "https://www.primevideo.com",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/1200px-Amazon_Prime_Video_logo.svg.png",
+        acento: "#00a8e1"
+      },
+      {
+        nombre: "Disney+",
+        url:    "https://www.disneyplus.com",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/1200px-Disney%2B_logo.svg.png",
+        acento: "#1a3a8f"
+      },
+      {
+        nombre: "YouTube",
+        url:    "https://www.youtube.com",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/1200px-YouTube_Logo_2017.svg.png",
+        acento: "#ff0000"
+      },
+      {
+        nombre: "Spotify",
+        url:    "https://open.spotify.com",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png",
+        acento: "#1db954"
+      },
+      {
+        nombre: "Max",
+        url:    "https://www.max.com",
+        icono:  "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/HBO_Max_Logo.svg/1200px-HBO_Max_Logo.svg.png",
+        acento: "#002be7"
+      },
+    ];
+    // ─────────────────────────────────────────────────────────────────────────
+
+    const grid = document.getElementById('grid');
+
+    plataformas.forEach(p => {
+      const a = document.createElement('a');
+      a.className = 'card';
+      a.href = p.url;
+
+      // En Android WebView muchos sistemas bloquean _blank,
+      // así que usamos _self como fallback seguro.
+      // En Windows / Chrome normal se abrirá en la misma pestaña
+      // (lo cual en un kiosk es lo correcto).
+      a.target = '_self';
+
+      a.style.setProperty('--accent', p.acento);
+      a.innerHTML = `<img src="${p.icono}" alt="${p.nombre}" /><span>${p.nombre}</span>`;
+
+      grid.appendChild(a);
+    });
+  </script>
 
 </body>
 </html>
